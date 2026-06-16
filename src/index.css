@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* Proofluence design tokens (PRD §10.2) — Claude-style palette + typography */
+@theme inline {
+  --color-dark: #141413;
+  --color-light: #faf9f5;
+  --color-primary: #d97757;
+  --color-info: #6a9bcc;
+  --color-success: #788c5d;
+  --color-muted: #8a897e;
+  --color-border-dark: #2e2d2b;
+  --color-border-light: #e2e0d8;
+
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "Lora", serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  font-family: var(--font-body), serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), sans-serif;
+}
+
+/* Light surface override — used on cards and panels */
+.surface {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+/* Form input on light surfaces */
+.input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-light);
+  background-color: transparent;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+.input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+}
+
+/* Form input on dark surfaces */
+.input-dark {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border-dark);
+  background-color: transparent;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--color-light);
+}
+.input-dark::placeholder {
+  color: var(--color-muted);
+}
+.input-dark:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -1px;
+}
