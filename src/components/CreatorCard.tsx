@@ -8,9 +8,17 @@ export function CreatorCard({ creator }: { creator: Creator }) {
     <div className="surface flex flex-col gap-4 rounded-xl border border-border-light p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted/30 font-heading font-bold text-dark">
-            {creator.name.charAt(0)}
-          </div>
+          {creator.avatarUrl ? (
+            <img
+              src={creator.avatarUrl}
+              alt=""
+              className="h-12 w-12 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted/30 font-heading font-bold text-dark">
+              {creator.name.charAt(0)}
+            </div>
+          )}
           <div>
             <h3 className="font-heading text-base font-semibold leading-tight">
               {creator.name}

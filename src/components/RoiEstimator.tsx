@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Creator } from "@/lib/creators";
 import { projectRoi, type RoiResult } from "@/lib/roi";
 import { formatCount, formatINR } from "@/lib/format";
@@ -19,12 +19,15 @@ export function RoiEstimator({
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState(799);
   const [campaignBudget, setCampaignBudget] = useState(creator.baseRatePerVideo);
-  const [result, setResult] = useState<RoiResult | null>(null);
 
-  function estimate(e: React.FormEvent) {
-    e.preventDefault();
-    setResult(projectRoi(creator, { productPrice, campaignBudget }));
-  }
+  // Recompute live as inputs change, so the projection visibly responds.
+  const result: RoiResult | null = useMemo(
+    () =>
+      productPrice > 0 && campaignBudget > 0
+        ? projectRoi(creator, { productPrice, campaignBudget })
+        : null,
+    [creator, productPrice, campaignBudget]
+  );
 
   return (
     <div
@@ -49,7 +52,7 @@ export function RoiEstimator({
           </button>
         </div>
 
-        <form onSubmit={estimate} className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4">
           <Field label="Product / service">
             <input
               value={productName}
@@ -71,18 +74,17 @@ export function RoiEstimator({
             <input
               type="number"
               min={0}
+              step={1000}
               value={campaignBudget}
               onChange={(e) => setCampaignBudget(Number(e.target.value))}
               className="input"
             />
+            <span className="mt-1 block text-xs text-muted">
+              ≈ {formatINR(creator.baseRatePerVideo)}/video — drag higher to fund
+              more deliverables.
+            </span>
           </Field>
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-primary py-2.5 font-heading font-semibold text-light hover:opacity-90"
-          >
-            Project ROI
-          </button>
-        </form>
+        </div>
 
         {result && (
           <div className="mt-8 space-y-4">
@@ -105,6 +107,10 @@ export function RoiEstimator({
               <Stat label="Reach (views)" value={formatCount(result.projectedViews)} />
               <Stat label="Est. clicks" value={formatCount(result.projectedClicks)} />
               <Stat label="Est. conversions" value={String(result.projectedConversions)} />
+              <Stat
+                label="Deliverables"
+                value={`${result.deliverables} video${result.deliverables === 1 ? "" : "s"}`}
+              />
               <Stat label="Total spend" value={formatINR(result.totalSpend)} />
             </div>
 
@@ -124,15 +130,17 @@ export function RoiEstimator({
                 </span>
               </div>
               <div className="mt-2 text-xs text-muted">
-                CTR {(result.ctrUsed * 100).toFixed(1)}% · conversion{" "}
-                {(result.convRateUsed * 100).toFixed(1)}% · authenticity factor{" "}
+                CTR {(result.ctrUsed * 100).toFixed(1)}%
+                {creator.historicalAvgCtr ? " (historical)" : ` (×${result.engagementFactor.toFixed(2)} engagement)`}{" "}
+                · conversion {(result.convRateUsed * 100).toFixed(1)}% · authenticity{" "}
                 {(result.authFactor * 100).toFixed(0)}%
               </div>
             </div>
 
             <p className="text-xs text-muted">
-              Based on historical averages and niche benchmarks. Actual results
-              may vary.
+              Reach is the creator's real avg views ({formatCount(creator.avgViews)})
+              scaled by authenticity, engagement and deliverables. Conversion uses
+              {creator.niche} niche benchmarks. Actual results may vary.
             </p>
           </div>
         )}

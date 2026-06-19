@@ -27,6 +27,22 @@ export type Creator = {
   historicalAvgCtr?: number; // 0-1, overrides niche benchmark in ROI
   platform: "youtube" | "instagram" | "both";
   location: "India metro" | "India tier-2" | "Global";
+
+  // --- Enriched fields, present when sourced from a live YouTube scrape ---
+  source?: "seed" | "youtube";
+  channelId?: string;
+  customUrl?: string;
+  totalViews?: number;
+  videoCount?: number;
+  channelCountry?: string;
+  channelCreatedAt?: string;
+  uploadsPerMonth?: number;
+  lastUploadAt?: string;
+  avgDurationSeconds?: number;
+  topics?: string[];
+  keywords?: string[];
+  recentVideos?: { id: string; title: string; views: number }[];
+  analyzed?: boolean; // true once AI analysis has run
 };
 
 export const NICHES = [

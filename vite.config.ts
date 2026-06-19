@@ -10,4 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    // Bind to 0.0.0.0 so the dev server is reachable from other devices on the
+    // LAN (Vite prints a "Network:" URL like http://192.168.x.x:5173).
+    host: true,
+    port: 5173,
+  },
+  preview: {
+    host: true,
+    port: 4173,
+  },
 });
